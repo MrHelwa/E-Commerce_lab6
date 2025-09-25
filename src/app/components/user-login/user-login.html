@@ -1,0 +1,85 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2>User Login</h2>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+                <!-- Email -->
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email *</label>
+                    <input type="email" id="email" class="form-control" [class.is-valid]="isFieldValid('email')"
+                        [class.is-invalid]="isFieldInvalid('email')" formControlName="email"
+                        placeholder="Enter your email">
+
+                    @if (isFieldInvalid('email')) {
+                    <div class="invalid-feedback">
+                        @if (getControl('email')?.errors?.['required']) {
+                        <div>Email is required.</div>
+                        }
+                        @if (getControl('email')?.errors?.['email']) {
+                        <div>Please enter a valid email address.</div>
+                        }
+                    </div>
+                    }
+                    @if (isFieldValid('email')) {
+                    <div class="valid-feedback">
+                        Valid email address!
+                    </div>
+                    }
+                </div>
+
+                <!-- Password -->
+                <div class="form-group mb-3">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" id="password" class="form-control"
+                        [class.is-valid]="isFieldValid('password')" [class.is-invalid]="isFieldInvalid('password')"
+                        formControlName="password" placeholder="Enter your password">
+
+                    @if (isFieldInvalid('password')) {
+                    <div class="invalid-feedback">
+                        @if (getControl('password')?.errors?.['required']) {
+                        <div>Password is required.</div>
+                        }
+                        @if (getControl('password')?.errors?.['minlength']) {
+                        <div>Password must be at least 6 characters long.</div>
+                        }
+                    </div>
+                    }
+                    @if (isFieldValid('password')) {
+                    <div class="valid-feedback">
+                        Password looks good!
+                    </div>
+                    }
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary me-2">Login</button>
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset Form</button>
+                </div>
+            </form>
+
+            <!-- Login Success Message -->
+            @if (loginMessage) {
+            <div class="alert alert-success mt-4">
+                {{ loginMessage }}
+            </div>
+            }
+
+            <!-- Login Data Display -->
+            @if (loginData) {
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4>Login Information</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> {{ loginData.email }}</p>
+                    <!-- <p><strong>Login Time:</strong> {{ new Date() | date:'medium' }}</p> -->
+                    <p class="text-success">Successfully authenticated!</p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

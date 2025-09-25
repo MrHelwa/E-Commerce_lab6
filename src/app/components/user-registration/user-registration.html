@@ -1,0 +1,175 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>User Registration</h2>
+
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+
+                <!-- Full Name -->
+                <div class="form-group mb-3">
+                    <label for="fullName" class="form-label">Full Name *</label>
+                    <input type="text" id="fullName" class="form-control" [class.is-valid]="isFieldValid('fullName')"
+                        [class.is-invalid]="isFieldInvalid('fullName')" formControlName="fullName"
+                        placeholder="Enter your full name">
+
+                    @if (isFieldInvalid('fullName')) {
+                    <div class="invalid-feedback">
+                        @if (getControl('fullName')?.errors?.['required']) {
+                        <div>Full name is required.</div>
+                        }
+                        @if (getControl('fullName')?.errors?.['minlength']) {
+                        <div>Full name must be at least 5 characters long.</div>
+                        }
+                    </div>
+                    }
+                    @if (isFieldValid('fullName')) {
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    }
+                </div>
+
+                <!-- Email -->
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email *</label>
+                    <input type="email" id="email" class="form-control" [class.is-valid]="isFieldValid('email')"
+                        [class.is-invalid]="isFieldInvalid('email')" formControlName="email"
+                        placeholder="Enter your email">
+
+                    @if (isFieldInvalid('email')) {
+                    <div class="invalid-feedback">
+                        @if (getControl('email')?.errors?.['required']) {
+                        <div>Email is required.</div>
+                        }
+                        @if (getControl('email')?.errors?.['email']) {
+                        <div>Please enter a valid email address.</div>
+                        }
+                        @if (getControl('email')?.errors?.['emailPattern']) {
+                        <div>Email format is invalid.</div>
+                        }
+                    </div>
+                    }
+                    @if (isFieldValid('email')) {
+                    <div class="valid-feedback">
+                        Valid email address!
+                    </div>
+                    }
+                </div>
+
+                <!-- Mobile Numbers -->
+                <div class="form-group mb-3">
+                    <label class="form-label">Mobile Number *</label>
+                    <div formArrayName="mobiles">
+                        @for (mobile of mobiles.controls; track $index; let i = $index) {
+                        <div class="input-group mb-2">
+                            <input type="tel" class="form-control" [class.is-valid]="isMobileValid(i)"
+                                [class.is-invalid]="isMobileInvalid(i)" [formControlName]="i" placeholder="01xxxxxxxxx">
+
+                            @if (mobiles.length > 1) {
+                            <button type="button" class="btn btn-danger" (click)="removeMobile(i)">
+                                Remove
+                            </button>
+                            }
+
+                            @if (isMobileInvalid(i)) {
+                            <div class="invalid-feedback d-block">
+                                @if (getMobileControl(i)?.errors?.['required']) {
+                                <div>Mobile number is required.</div>
+                                }
+                                @if (getMobileControl(i)?.errors?.['pattern']) {
+                                <div>Invalid Egyptian mobile number format (01xxxxxxxxx).</div>
+                                }
+                            </div>
+                            }
+                            @if (isMobileValid(i)) {
+                            <div class="valid-feedback d-block">
+                                Valid mobile number!
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+
+                    <!-- <button type="button" class="btn btn-secondary" (click)="addMobile()">
+                        Add Another Mobile
+                    </button> -->
+                </div>
+
+                <!-- Password -->
+                <div class="form-group mb-3">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" id="password" class="form-control"
+                        [class.is-valid]="isFieldValid('password')" [class.is-invalid]="isFieldInvalid('password')"
+                        formControlName="password" placeholder="Enter your password">
+
+                    @if (isFieldInvalid('password')) {
+                    <div class="invalid-feedback">
+                        @if (getControl('password')?.errors?.['required']) {
+                        <div>Password is required.</div>
+                        }
+                        @if (getControl('password')?.errors?.['minlength']) {
+                        <div>Password must be at least 6 characters long.</div>
+                        }
+                    </div>
+                    }
+                    @if (isFieldValid('password')) {
+                    <div class="valid-feedback">
+                        Strong password!
+                    </div>
+                    }
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" class="form-control"
+                        [class.is-valid]="isFieldValid('confirmPassword') && !registrationForm.errors?.['passwordMismatch']"
+                        [class.is-invalid]="isFieldInvalid('confirmPassword') || registrationForm.errors?.['passwordMismatch']"
+                        formControlName="confirmPassword" placeholder="Confirm your password">
+
+                    @if (isFieldInvalid('confirmPassword') || registrationForm.errors?.['passwordMismatch']) {
+                    <div class="invalid-feedback">
+                        @if (getControl('confirmPassword')?.errors?.['required']) {
+                        <div>Please confirm your password.</div>
+                        }
+                        @if (registrationForm.errors?.['passwordMismatch']) {
+                        <div>Passwords do not match.</div>
+                        }
+                    </div>
+                    }
+                    @if (isFieldValid('confirmPassword') && !registrationForm.errors?.['passwordMismatch']) {
+                    <div class="valid-feedback">
+                        Passwords match!
+                    </div>
+                    }
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary me-2">Register</button>
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset Form</button>
+                </div>
+            </form>
+
+            <!-- Registration Success Display -->
+            @if (registeredUser) {
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h4>Registration Successful!</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Full Name:</strong> {{ registeredUser.fullName }}</p>
+                    <p><strong>Email:</strong> {{ registeredUser.email }}</p>
+                    <p><strong>Mobile Numbers:</strong></p>
+                    <ul>
+                        @for (mobile of registeredUser.mobiles; track $index) {
+                        <li>{{ mobile }}</li>
+                        }
+                    </ul>
+                    <!-- <p><strong>Registration Date:</strong> {{ new Date() | date:'medium' }}</p> -->
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

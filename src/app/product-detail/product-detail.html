@@ -1,0 +1,48 @@
+@if (product) {
+<div style="padding: 30px;">
+    <h1>Product Details</h1>
+
+    <div style="display: flex; gap: 30px; align-items: start;">
+        <div style="flex: 1;">
+            <img [src]="product.img" [alt]="product.name" style="width: 100%; max-width: 400px; border-radius: 8px ;">
+        </div>
+
+        <div style="flex: 1;">
+            <h2>{{ product.name }}</h2>
+
+            <div style="margin: 15px 0;">
+                <strong>ID:</strong> {{ product.id }}
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Price:</strong> {{ product.price | currency:'USD':'symbol':'1.2-2' }}
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Available Quantity:</strong> {{ product.quantity }}
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Category ID:</strong> {{ product.categoryId }}
+            </div>
+
+            <div style="margin: 15px 0;">
+                <strong>Stock Status:</strong>
+                <span [style.color]="product.quantity === 0 ? 'red' : 'green'">
+                    {{ product.quantity === 0 ? 'Out of Stock' : 'Available' }}
+                </span>
+            </div>
+
+            <button (click)="goBack()"
+                style="background-color: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 20px;">
+                Back to Products
+            </button>
+        </div>
+    </div>
+</div>
+} @else {
+<div style="text-align: center; padding: 50px;">
+    <h2>Product not found</h2>
+    <a routerLink="/products">Back to Products</a>
+</div>
+}

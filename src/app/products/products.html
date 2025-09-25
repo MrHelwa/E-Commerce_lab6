@@ -1,0 +1,78 @@
+<div>
+    <h1>Our Products</h1>
+
+    <!-- Display current date using date pipe -->
+    <h3>Today's Date: {{ currentDate | date:'fullDate' }}</h3>
+
+    <!-- Display formatted credit card using custom pipe -->
+    <p>Sample Credit Card: {{ creditCardNumber | creditCard }}</p>
+
+    <hr>
+
+    <!-- Search -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label placeholder="Search by product name...">Search Products:</label>
+                <input class="form-control" type="text" placeholder="Search by name..." [(ngModel)]="searchText">
+            </div>
+        </div>
+        <br>
+
+        <!-- Category Filter -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Filter by Category:</label>
+                <select class="form-control" [(ngModel)]="selectedCategoryId">
+                    <option value="0">All Categories</option>
+                    @for (category of categories; track category.id) {
+                    <option [value]="category.id">{{ category.name }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Products with directive -->
+    @for (product of filteredProducts; track product.id) {
+    <div appCardShadow
+        style="border: 1px solid #ccc; padding: 15px; margin: 10px; display: inline-block; width: 300px;">
+        <img [src]="product.img" [alt]="product.name" style="width: 100%; height: 150px; object-fit:contain">
+
+        <h3>{{ product.name }}</h3>
+
+        <!-- Using currency pipe -->
+        <p><strong>Price: {{ product.price | currency:'USD':'symbol':'1.2-2' }}</strong></p>
+
+        <p [style.color]="getStockClass(product.quantity)">
+            <strong>Status: {{ getStockStatus(product.quantity) }}</strong>
+        </p>
+
+        <p>Quantity: {{ product.quantity }}</p>
+        <div class="mt-auto">
+            <div class="btn-group w-100" role="group">
+                <button class="btn btn-primary" [disabled]="product.quantity === 0" (click)="buyProduct(product)"
+                    style="margin-right: 10px;">
+                    Buy Now
+                </button>
+
+                <!-- <button class="btn btn-outline-info" (click)="viewDetails(product)">View Details</button> -->
+                <button class="btn btn-outline-info" [routerLink]="['/products', product.id]">
+                  View Details
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (filteredProducts.length === 0) {
+    <p>No products found</p>
+    }
+
+    <!-- @if (showDetails && selectedProduct) {
+    <app-product-detail [product]="selectedProduct" (closeDetails)="onCloseDetails()">
+    </app-product-detail>
+    } -->
+
+</div>
