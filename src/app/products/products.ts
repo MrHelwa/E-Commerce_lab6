@@ -32,7 +32,7 @@ export class Products {
     this.categories = this.productsService.getAllCategories();
   }
 
-  // Existing Lab 2 methods
+  //Lab 2 methods
   getStockStatus(quantity: number): string {
     switch (quantity) {
       case 0:

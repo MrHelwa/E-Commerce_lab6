@@ -73,10 +73,10 @@
 
                             @if (isMobileInvalid(i)) {
                             <div class="invalid-feedback d-block">
-                                @if (getMobileControl(i)?.errors?.['required']) {
+                                @if (getMobileControl(i).errors?.['required']) {
                                 <div>Mobile number is required.</div>
                                 }
-                                @if (getMobileControl(i)?.errors?.['pattern']) {
+                                @if (getMobileControl(i).errors?.['pattern']) {
                                 <div>Invalid Egyptian mobile number format (01xxxxxxxxx).</div>
                                 }
                             </div>

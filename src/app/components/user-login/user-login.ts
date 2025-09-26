@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ApiService, LoginRequest } from '../../services/api';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-user-login',
@@ -11,12 +14,18 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 })
 export class UserLogin {
   loginForm: FormGroup;
-  loginData: any = null;
   loginMessage: string = '';
+  isLoading: boolean = false;
+  loginError: string = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private apiService: ApiService,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]], // Changed from email to username for FakeStore API
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -41,20 +50,40 @@ export class UserLogin {
   // Reset form
   resetForm() {
     this.loginForm.reset();
-    this.loginData = null;
     this.loginMessage = '';
+    this.loginError = '';
   }
 
-  // Submit form
+  // Submit form with API call
   onSubmit() {
     if (this.loginForm.valid) {
-      this.loginData = this.loginForm.value;
-      this.loginMessage = 'Login successful! Welcome back!';
+      this.isLoading = true;
+      this.loginError = '';
 
-      // Simulate login process
-      setTimeout(() => {
-        this.resetForm();
-      }, 3000); // Clear after 3 seconds
+      const credentials: LoginRequest = {
+        username: this.loginForm.get('username')?.value,
+        password: this.loginForm.get('password')?.value
+      };
+
+      this.apiService.login(credentials).subscribe({
+        next: (response) => {
+          // Save token to localStorage
+          this.authService.saveToken(response.token);
+
+          this.loginMessage = 'Login successful! Redirecting...';
+          this.isLoading = false;
+
+          // Redirect to products page after successful login
+          setTimeout(() => {
+            this.router.navigate(['/products']);
+          }, 1500);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.loginError = 'Invalid username or password. Please try again.';
+          console.error('Login error:', error);
+        }
+      });
     } else {
       // Mark all fields as touched to show validation errors
       this.loginForm.markAllAsTouched();

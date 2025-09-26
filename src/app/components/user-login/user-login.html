@@ -5,28 +5,30 @@
 
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-                <!-- Email -->
+                <!-- Username (changed from email for FakeStore API) -->
                 <div class="form-group mb-3">
-                    <label for="email" class="form-label">Email *</label>
-                    <input type="email" id="email" class="form-control" [class.is-valid]="isFieldValid('email')"
-                        [class.is-invalid]="isFieldInvalid('email')" formControlName="email"
-                        placeholder="Enter your email">
+                    <label for="username" class="form-label">Username *</label>
+                    <input type="text" id="username" class="form-control" [class.is-valid]="isFieldValid('username')"
+                        [class.is-invalid]="isFieldInvalid('username')" formControlName="username"
+                        placeholder="Enter your username">
 
-                    @if (isFieldInvalid('email')) {
+                    @if (isFieldInvalid('username')) {
                     <div class="invalid-feedback">
-                        @if (getControl('email')?.errors?.['required']) {
-                        <div>Email is required.</div>
-                        }
-                        @if (getControl('email')?.errors?.['email']) {
-                        <div>Please enter a valid email address.</div>
+                        @if (getControl('username')?.errors?.['required']) {
+                        <div>Username is required.</div>
                         }
                     </div>
                     }
-                    @if (isFieldValid('email')) {
+                    @if (isFieldValid('username')) {
                     <div class="valid-feedback">
-                        Valid email address!
+                        Valid username!
                     </div>
                     }
+
+                    <!-- Demo credentials hint -->
+                    <small class="form-text text-muted">
+                        Demo: Use "mor_2314" as username and "83r5^_" as password
+                    </small>
                 </div>
 
                 <!-- Password -->
@@ -55,29 +57,30 @@
 
                 <!-- Buttons -->
                 <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-primary me-2">Login</button>
+                    <button type="submit" class="btn btn-primary me-2" [disabled]="isLoading">
+                        @if (isLoading) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Logging in...
+                        } @else {
+                        Login
+                        }
+                    </button>
                     <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset Form</button>
                 </div>
             </form>
+
+            <!-- Login Error Message -->
+            @if (loginError) {
+            <div class="alert alert-danger mt-4">
+                {{ loginError }}
+            </div>
+            }
+
 
             <!-- Login Success Message -->
             @if (loginMessage) {
             <div class="alert alert-success mt-4">
                 {{ loginMessage }}
-            </div>
-            }
-
-            <!-- Login Data Display -->
-            @if (loginData) {
-            <div class="card mt-4">
-                <div class="card-header bg-primary text-white">
-                    <h4>Login Information</h4>
-                </div>
-                <div class="card-body">
-                    <p><strong>Email:</strong> {{ loginData.email }}</p>
-                    <!-- <p><strong>Login Time:</strong> {{ new Date() | date:'medium' }}</p> -->
-                    <p class="text-success">Successfully authenticated!</p>
-                </div>
             </div>
             }
         </div>

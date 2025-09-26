@@ -1,0 +1,129 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Search Products</h2>
+
+
+            <!-- Search Input -->
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" [(ngModel)]="searchQuery" (keypress)="onKeyPress($event)"
+                    placeholder="Search for products (e.g., phone, laptop, shirt...)"
+                    style="font-size: 16px; padding: 12px;">
+
+                <button class="btn btn-primary" (click)="searchProducts()" [disabled]="!searchQuery.trim() || isLoading"
+                    style="padding: 12px 24px;">
+                    @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Searching...
+                    } @else {
+                    Search
+                    }
+                </button>
+
+                <button class="btn btn-secondary" (click)="clearSearch()" style="padding: 12px 16px;">
+                    Clear
+                </button>
+            </div>
+
+            <!-- Search Results Count -->
+            @if (hasSearched && !isLoading) {
+            <div class="mb-3">
+                @if (totalResults > 0) {
+                <p class="text-success">
+                    <strong>Found {{ totalResults }} products for "{{ searchQuery }}"</strong>
+                </p>
+                } @else {
+                <p class="text-warning">
+                    <strong>No products found for "{{ searchQuery }}"</strong>
+                </p>
+                }
+            </div>
+            }
+
+            <!-- Loading Spinner -->
+            @if (isLoading) {
+            <div class="text-center mt-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Searching for products...</p>
+            </div>
+            }
+
+            <!-- Search Results -->
+            @if (searchResults.length > 0 && !isLoading) {
+            <div class="row">
+                @for (product of searchResults; track product.id) {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <img [src]="product.thumbnail || product.image" [alt]="product.title" class="card-img-top"
+                            style="height: 200px; object-fit: cover;">
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ product.title }}</h5>
+                            <p class="card-text text-truncate">{{ product.description }}</p>
+
+                            <div class="mt-auto">
+                                <p class="card-text">
+                                    <strong class="text-success">${{ product.price }}</strong>
+                                    @if (product.discountPercentage) {
+                                    <small class="text-muted ms-2">
+                                        ({{ product.discountPercentage }}% off)
+                                    </small>
+                                    }
+                                </p>
+
+                                @if (product.rating) {
+                                <p class="card-text">
+                                    <small class="text-warning">
+                                        ⭐ {{ product.rating }}
+                                        @if (product.stock) {
+                                        <span class="text-muted">({{ product.stock }} in stock)</span>
+                                        }
+                                    </small>
+                                </p>
+                                }
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-secondary">{{ product.category }}</span>
+                                    <span class="badge bg-info">{{ product.brand || 'No Brand' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+
+            <!-- No Results Message -->
+            @if (hasSearched && searchResults.length === 0 && !isLoading) {
+            <div class="text-center mt-5">
+                <h4>No products found</h4>
+                <p>Try searching for different keywords like "phone", "laptop", "shirt", "beauty", etc.</p>
+            </div>
+            }
+
+            <!-- Search Suggestions -->
+            @if (!hasSearched) {
+            <div class="mt-4">
+                <h5>Popular Search Terms:</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="searchQuery = 'phone'; searchProducts()">Phone</button>
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="searchQuery = 'laptop'; searchProducts()">Laptop</button>
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="searchQuery = 'shirt'; searchProducts()">Shirt</button>
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="searchQuery = 'beauty'; searchProducts()">Beauty</button>
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="searchQuery = 'furniture'; searchProducts()">Furniture</button>
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="searchQuery = 'groceries'; searchProducts()">Groceries</button>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
